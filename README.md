@@ -22,20 +22,7 @@ This project is a basic Java application designed to help beginners get started 
    cd java-beginner-project
    ```
 
-## Project Structure
 
-```
-java-beginner-project/
-├── src/
-│   └── main/
-│       └── java/
-│           └── com/
-│               └── example/
-│                   └── App.java
-├── .gitignore
-├── README.md
-└── pom.xml
-```
 
 ## Running the Project
 
@@ -61,9 +48,6 @@ java-beginner-project/
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a pull request.
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-```
 
 Simply copy the above content and paste it into your `README.md` file, and adjust any specific details such as the repository URL and your username as needed.
