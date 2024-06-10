@@ -1,4 +1,4 @@
-Sure! Here is a shorter version of the `README.md` file:
+
 
 ```markdown
 # Java Beginner Project
