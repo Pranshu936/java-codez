@@ -50,4 +50,4 @@ This project is a basic Java application designed to help beginners get started 
 
 
 
-Simply copy the above content and paste it into your `README.md` file, and adjust any specific details such as the repository URL and your username as needed.
+
