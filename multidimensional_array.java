@@ -18,7 +18,7 @@ public class multidimensional_array {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                System.out.print("Seat [" + i + "][" + j + "]: ");
+                System.out.printf("Seat [%d][%d]: ",i,j);
                 theater[i][j] = scanner.next();
             }
         }
