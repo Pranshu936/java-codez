@@ -124,8 +124,11 @@ public class BankingApp {
                     case 5:  
                         System.out.println("See you soon...");  
                         break;  
-                }  
+                } 
             }  
             while (ch != 5);  
         }  
     }  
+
+
+// made by The Pranshu kumar
