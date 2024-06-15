@@ -51,17 +51,19 @@ class BankDetails {
         return (false);  
     }  
 }  
+
+// main class 
 public class BankingApp {  
     public static void main(String arg[]) {  
         Scanner sc = new Scanner(System.in);  
         //create initial accounts  
         System.out.print("How many number of customers do you want to input? ");  
         int n = sc.nextInt();  
-        BankDetails C[] = new BankDetails[n];  
-        for (int i = 0; i < C.length; i++) {  
-            C[i] = new BankDetails();  
-            C[i].openAccount();  
-        }  
+        BankDetails[] C = new BankDetails[n];
+        for (BankDetails account : C) {
+            account = new BankDetails();
+            account.openAccount();
+        } 
         // loop runs until number 5 is not pressed to exit  
         int ch;  
         do {  
