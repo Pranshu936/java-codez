@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class PUMIS {
@@ -82,7 +81,7 @@ public class PUMIS {
 
             System.out.println("Student added successfully.");
         } else {
-            System.out.println("Cannot add more students. Array is full.");
+            System.out.println("Cannot add more students. Maximum limit reached (" + MAX_STUDENTS + " students).");
         }
     }
 
@@ -166,7 +165,17 @@ public class PUMIS {
 
     private static void sortStudentsByID() {
         if (numStudents > 1) {
-            Arrays.sort(students, 0, numStudents, (s1, s2) -> s1.getId() - s2.getId());
+            // Bubble sort by student ID
+            for (int i = 0; i < numStudents - 1; i++) {
+                for (int j = 0; j < numStudents - i - 1; j++) {
+                    if (students[j].getId() > students[j + 1].getId()) {
+                        // Swap students
+                        Student temp = students[j];
+                        students[j] = students[j + 1];
+                        students[j + 1] = temp;
+                    }
+                }
+            }
             System.out.println("Students sorted by ID.");
         } else {
             System.out.println("Sorting requires at least 2 students.");
