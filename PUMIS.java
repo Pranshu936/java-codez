@@ -1,7 +1,6 @@
 import java.util.Scanner;
-import java.util.Arrays;
 
-public class PUMIS {
+public class StudentManagementSystem {
     private static Student[] students = new Student[10]; // Initial capacity of 10 students
     private static int numStudents = 0; // Number of students currently in the system
     private static Scanner scanner = new Scanner(System.in);
@@ -63,8 +62,8 @@ public class PUMIS {
 
     private static void addStudent() {
         if (numStudents == students.length) {
-            // If array is full, resize it
-            students = Arrays.copyOf(students, students.length * 2);
+            System.out.println("Student admission is over. No more students can be added.");
+            return;
         }
 
         System.out.print("Enter student ID: ");
