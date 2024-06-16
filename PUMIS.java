@@ -1,8 +1,8 @@
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class PUMIS {
-    private static final int MAX_STUDENTS = 100; // Maximum number of students
-    private static Student[] students = new Student[MAX_STUDENTS]; // Array to store students
+    private static Student[] students = new Student[10]; // Initial capacity of 10 students
     private static int numStudents = 0; // Number of students currently in the system
     private static Scanner scanner = new Scanner(System.in);
 
@@ -62,27 +62,28 @@ public class PUMIS {
     }
 
     private static void addStudent() {
-        if (numStudents < MAX_STUDENTS) {
-            System.out.print("Enter student ID: ");
-            int id = getIntInput();
-            scanner.nextLine(); // Consume newline character
-
-            // Check if the ID already exists
-            if (findStudentByID(id) != null) {
-                System.out.println("Student with ID " + id + " already exists. Please enter a different ID.");
-                return;
-            }
-
-            System.out.print("Enter student name: ");
-            String name = scanner.nextLine();
-
-            students[numStudents] = new Student(id, name);
-            numStudents++;
-
-            System.out.println("Student added successfully.");
-        } else {
-            System.out.println("Cannot add more students. Maximum limit reached (" + MAX_STUDENTS + " students).");
+        if (numStudents == students.length) {
+            // If array is full, resize it
+            students = Arrays.copyOf(students, students.length * 2);
         }
+
+        System.out.print("Enter student ID: ");
+        int id = getIntInput();
+        scanner.nextLine(); // Consume newline character
+
+        // Check if the ID already exists
+        if (findStudentByID(id) != null) {
+            System.out.println("Student with ID " + id + " already exists. Please enter a different ID.");
+            return;
+        }
+
+        System.out.print("Enter student name: ");
+        String name = scanner.nextLine();
+
+        students[numStudents] = new Student(id, name);
+        numStudents++;
+
+        System.out.println("Student added successfully.");
     }
 
     private static void displayAllStudents() {
@@ -152,8 +153,12 @@ public class PUMIS {
                     students[j] = students[j + 1];
                 }
                 numStudents--;
-                System.out.println("Student deleted successfully.");
+
+                // Clear the last element
+                students[numStudents] = null;
+
                 found = true;
+                System.out.println("Student deleted successfully.");
                 break;
             }
         }
