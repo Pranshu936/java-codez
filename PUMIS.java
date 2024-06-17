@@ -1,9 +1,11 @@
 import java.util.Scanner;
+import java.util.Arrays;
 
-public class StudentManagementSystem {
+public class PUMIS {
     private static Student[] students = new Student[10]; // Initial capacity of 10 students
     private static int numStudents = 0; // Number of students currently in the system
     private static Scanner scanner = new Scanner(System.in);
+    private static int idcounter=1001;
 
     public static void main(String[] args) {
         boolean exit = false;
@@ -62,12 +64,12 @@ public class StudentManagementSystem {
 
     private static void addStudent() {
         if (numStudents == students.length) {
-            System.out.println("Student admission is over. No more students can be added.");
-            return;
+            // If array is full, resize it
+            students = Arrays.copyOf(students, students.length * 2);
         }
 
-        System.out.print("Enter student ID: ");
-        int id = getIntInput();
+        System.out.print("Id assigned ");
+        int id = idcounter++;
         scanner.nextLine(); // Consume newline character
 
         // Check if the ID already exists
