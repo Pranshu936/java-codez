@@ -68,7 +68,7 @@ public class PUMIS {
             students = Arrays.copyOf(students, students.length * 2);
         }
 
-        System.out.print("Id assigned ");
+        System.out.print("Id assigned \n");
         int id = idcounter++;
         scanner.nextLine(); // Consume newline character
 
