@@ -2,15 +2,16 @@ import java.util.Scanner;
 import java.util.Arrays;
 
 public class PUMIS {
-    private static Student[] students = new Student[10]; // Initial capacity of 10 students
+    private static Student[] students = new Student[10]; // Array to store students
     private static int numStudents = 0; // Number of students currently in the system
     private static Scanner scanner = new Scanner(System.in);
-    private static int idcounter=1001;
+    private static int idcounter = 1001; // Counter to generate unique student IDs
 
     public static void main(String[] args) {
         boolean exit = false;
 
         while (!exit) {
+            // Display menu options
             System.out.println("\nStudent Management System Menu:");
             System.out.println("1. Add Student");
             System.out.println("2. Display All Students");
@@ -21,29 +22,29 @@ public class PUMIS {
             System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
-            int choice = getIntInput();
+            int choice = scanner.nextInt(); // Read user choice
 
             switch (choice) {
                 case 1:
-                    addStudent();
+                    addStudent(); // Add a new student
                     break;
                 case 2:
-                    displayAllStudents();
+                    displayAllStudents(); // Display all students
                     break;
                 case 3:
-                    searchStudentByID();
+                    searchStudentByID(); // Search for a student by ID
                     break;
                 case 4:
-                    updateStudent();
+                    updateStudent(); // Update student information
                     break;
                 case 5:
-                    deleteStudentByID();
+                    deleteStudentByID(); // Delete a student by ID
                     break;
                 case 6:
-                    sortStudentsByID();
+                    sortStudentsByID(); // Sort students by ID
                     break;
                 case 7:
-                    exit = true;
+                    exit = true; // Exit the program
                     System.out.println("Exiting... Thank you!");
                     break;
                 default:
@@ -51,9 +52,10 @@ public class PUMIS {
             }
         }
 
-        scanner.close();
+        scanner.close(); // Close the scanner object
     }
 
+    // Utility method to get integer input from user
     private static int getIntInput() {
         while (!scanner.hasNextInt()) {
             System.out.print("Invalid input. Please enter a number: ");
@@ -62,6 +64,7 @@ public class PUMIS {
         return scanner.nextInt();
     }
 
+    // Method to add a new student
     private static void addStudent() {
         if (numStudents == students.length) {
             // If array is full, resize it
@@ -81,59 +84,63 @@ public class PUMIS {
         System.out.print("Enter student name: ");
         String name = scanner.nextLine();
 
-        students[numStudents] = new Student(id, name);
-        numStudents++;
+        students[numStudents] = new Student(id, name); // Create and add new student
+        numStudents++; // Increment student count
 
         System.out.println("Student added successfully.");
     }
 
+    // Method to display all students
     private static void displayAllStudents() {
         if (numStudents == 0) {
             System.out.println("No students to display.");
         } else {
             System.out.println("\nList of Students:");
             for (int i = 0; i < numStudents; i++) {
-                System.out.println(students[i]);
+                System.out.println(students[i]); // Print each student's information
             }
         }
     }
 
+    // Method to search for a student by ID
     private static void searchStudentByID() {
         System.out.print("Enter student ID to search: ");
-        int id = getIntInput();
+        int id = getIntInput(); // Get student ID from user input
         scanner.nextLine(); // Consume newline character
 
-        Student foundStudent = findStudentByID(id);
+        Student foundStudent = findStudentByID(id); // Search for student
 
         if (foundStudent != null) {
             System.out.println("Student found:");
-            System.out.println(foundStudent);
+            System.out.println(foundStudent); // Display student information
         } else {
             System.out.println("Student not found with ID: " + id);
         }
     }
 
+    // Helper method to find a student by ID
     private static Student findStudentByID(int id) {
         for (int i = 0; i < numStudents; i++) {
             if (students[i].getId() == id) {
-                return students[i];
+                return students[i]; // Return the student object if found
             }
         }
-        return null;
+        return null; // Return null if student with given ID is not found
     }
 
+    // Method to update student information
     private static void updateStudent() {
         System.out.print("Enter student ID to update: ");
-        int id = getIntInput();
+        int id = getIntInput(); // Get student ID from user input
         scanner.nextLine(); // Consume newline character
 
-        Student studentToUpdate = findStudentByID(id);
+        Student studentToUpdate = findStudentByID(id); // Find student to update
 
         if (studentToUpdate != null) {
             System.out.print("Enter new name for student: ");
-            String newName = scanner.nextLine();
+            String newName = scanner.nextLine(); // Get new name from user input
 
-            studentToUpdate.setName(newName);
+            studentToUpdate.setName(newName); // Update student name
 
             System.out.println("Student information updated successfully.");
         } else {
@@ -141,9 +148,10 @@ public class PUMIS {
         }
     }
 
+    // Method to delete a student by ID
     private static void deleteStudentByID() {
         System.out.print("Enter student ID to delete: ");
-        int id = getIntInput();
+        int id = getIntInput(); // Get student ID from user input
         scanner.nextLine(); // Consume newline character
 
         boolean found = false;
@@ -153,7 +161,7 @@ public class PUMIS {
                 for (int j = i; j < numStudents - 1; j++) {
                     students[j] = students[j + 1];
                 }
-                numStudents--;
+                numStudents--; // Decrement student count
 
                 // Clear the last element
                 students[numStudents] = null;
@@ -169,6 +177,7 @@ public class PUMIS {
         }
     }
 
+    // Method to sort students by ID using bubble sort
     private static void sortStudentsByID() {
         if (numStudents > 1) {
             // Bubble sort by student ID
@@ -188,6 +197,7 @@ public class PUMIS {
         }
     }
 
+    // Nested Student class to represent a student
     static class Student {
         private int id;
         private String name;
