@@ -1,4 +1,6 @@
-import java.util.Scanner;  
+import java.util.Scanner; 
+import java.util.InputMismatchException;
+
 class BankDetails {  
     private String accno;  
     private String name;  
@@ -6,16 +8,27 @@ class BankDetails {
     private long balance;  
     Scanner sc = new Scanner(System.in);  
     //method to open new account  
-    public void openAccount() {  
-        System.out.print("Enter Account No: ");  
-        accno = sc.next();  
-        System.out.print("Enter Account type: ");  
-        acc_type = sc.next();  
-        System.out.print("Enter Name: ");  
-        name = sc.next();  
-        System.out.print("Enter Balance: ");  
-        balance = sc.nextLong();  
-    }  
+    public void openAccount() {
+        System.out.print("Enter Account No: ");
+        accno = sc.next();
+        System.out.print("Enter Account type: ");
+        acc_type = sc.next();
+        System.out.print("Enter Name: ");
+        name = sc.next();
+        
+        // Handling InputMismatchException for balance input
+        while (true) {
+            try {
+                System.out.print("Enter Balance: ");
+                balance = sc.nextLong();
+                break; // Exit loop if input is correct
+            } 
+            catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
+    }
     //method to display account details  
     public void showAccount() {  
         System.out.println("Name of account holder: " + name);  
@@ -27,14 +40,33 @@ class BankDetails {
     public void deposit() {  
         long amt;  
         System.out.println("Enter the amount you want to deposit: ");  
-        amt = sc.nextLong();  
-        balance = balance + amt;  
-    }  
+        while (true) {
+            try {
+                amt = sc.nextLong();
+                break; // Exit loop if input is correct
+            } 
+            catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
+        balance = balance + amt;
+        System.out.println("Deposit successful. Updated balance: " + balance);
+    }   
     //method to withdraw money  
     public void withdrawal() {  
         long amt;  
-        System.out.println("Enter the amount you want to withdraw: ");  
-        amt = sc.nextLong();  
+        System.out.println("Enter the amount you want to withdraw: "); 
+        while (true) {
+            try {
+                amt = sc.nextLong();
+                break; // Exit loop if input is correct
+            } 
+            catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
         if (balance >= amt) {  
             balance = balance - amt;  
             System.out.println("Balance after withdrawal: " + balance);  
@@ -56,9 +88,18 @@ class BankDetails {
 public class BankingApp {  
     public static void main(String arg[]) {  
         Scanner sc = new Scanner(System.in);  
-        //create initial accounts  
-        System.out.print("How many number of customers do you want to input? ");  
-        int n = sc.nextInt();  
+        //create initial accounts 
+        int n=0;
+        System.out.print("How many number of customers do you want to input? "); 
+        while (true) {
+            try {
+                n = sc.nextInt();
+                break; // Exit loop if input is correct
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear the invalid input from the scanner
+            }
+        }
         BankDetails[] C = new BankDetails[n];
         for (int i = 0; i < C.length; i++) {
             C[i] = new BankDetails();
