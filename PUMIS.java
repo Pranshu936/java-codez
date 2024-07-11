@@ -97,9 +97,6 @@ public class PUMIS {
 
     String name;
     boolean validInput = false;
-
-    scanner.nextLine(); // Consume newline left by previous nextInt()
-
     while (!validInput) {
         System.out.print("Enter student name: ");
         name = scanner.nextLine(); // Read and trim input
