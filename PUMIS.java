@@ -58,15 +58,17 @@ public class PUMIS {
 
     // Utility method to get integer input from user
      private static int getIntInput() {
-        while (true) {
-            try {
-                return scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.print("Invalid input. Please enter a number: ");
-                scanner.next(); // Consume invalid input
-            }
+    while (true) {
+        try {
+            return scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.print("Invalid input. Please enter a number: ");
+            scanner.next(); // Consume invalid input
+        } finally {
+            scanner.nextLine(); // Consume newline character
         }
     }
+}
 
     //Take character as input only
     private static boolean isValidName(String str) {
@@ -80,36 +82,39 @@ public class PUMIS {
 
     // Method to add a new student
     private static void addStudent() {
-        if (numStudents == students.length) {
-            // If array is full, resize it
-            students = Arrays.copyOf(students, students.length * 2);
-        }
+    if (numStudents == students.length) {
+        // If array is full, resize it
+        students = Arrays.copyOf(students, students.length * 2);
+    }
 
-        int id = idcounter++;
+    int id = idcounter++;
 
-        // Check if the ID already exists
-        if (findStudentByID(id) != null) {
-            System.out.println("Student with ID " + id + " already exists. Please enter a different ID.");
-            return;
-        }
+    // Check if the ID already exists
+    if (findStudentByID(id) != null) {
+        System.out.println("Student with ID " + id + " already exists. Please enter a different ID.");
+        return;
+    }
 
-        String name;
-        boolean validInput = false;
+    String name;
+    boolean validInput = false;
 
-        while (!validInput) {
-            System.out.print("Enter student name: ");
-            name = scanner.nextLine().trim(); // Read and trim input
+    scanner.nextLine(); // Consume newline left by previous nextInt()
 
-            if (isValidName(name)) {
-                students[numStudents] = new Student(id, name); // Create and add new student
-                numStudents++; // Increment student count
-                validInput = true;
-                System.out.println("Student added successfully.");
-            } else {
-                System.out.println("Invalid name. Please enter a name with only characters.");
-            }
+    while (!validInput) {
+        System.out.print("Enter student name: ");
+        name = scanner.nextLine(); // Read and trim input
+
+        if (isValidName(name)) {
+            students[numStudents] = new Student(id, name); // Create and add new student
+            numStudents++; // Increment student count
+            validInput = true;
+            System.out.println("Student added successfully.");
+        } else {
+            System.out.println("Invalid name. Please enter a name with only characters.");
         }
     }
+}
+
     // Method to display all students
     private static void displayAllStudents() {
         if (numStudents == 0) {
@@ -123,20 +128,20 @@ public class PUMIS {
     }
 
     // Method to search for a student by ID
-    private static void searchStudentByID() {
-        System.out.print("Enter student ID to search: ");
-        int id = getIntInput(); // Get student ID from user input
-        scanner.nextLine(); // Consume newline character
+   private static void searchStudentByID() {
+    System.out.print("Enter student ID to search: ");
+    int id = getIntInput(); // Get student ID from user input
+    scanner.nextLine(); // Consume newline character
 
-        Student foundStudent = findStudentByID(id); // Search for student
+    Student foundStudent = findStudentByID(id); // Search for student
 
-        if (foundStudent != null) {
-            System.out.println("Student found:");
-            System.out.println(foundStudent); // Display student information
-        } else {
-            System.out.println("Student not found with ID: " + id);
-        }
+    if (foundStudent != null) {
+        System.out.println("Student found:");
+        System.out.println(foundStudent); // Display student information
+    } else {
+        System.out.println("Student not found with ID: " + id);
     }
+}
 
     // Helper method to find a student by ID
     private static Student findStudentByID(int id) {
