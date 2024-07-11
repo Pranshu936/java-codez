@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 
 public class PUMIS {
     private static Student[] students = new Student[10]; // Array to store students
@@ -56,12 +57,25 @@ public class PUMIS {
     }
 
     // Utility method to get integer input from user
-    private static int getIntInput() {
-        while (!scanner.hasNextInt()) {
-            System.out.print("Invalid input. Please enter a number: ");
-            scanner.next(); // Consume invalid input
+     private static int getIntInput() {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input. Please enter a number: ");
+                scanner.next(); // Consume invalid input
+            }
         }
-        return scanner.nextInt();
+    }
+
+    //Take character as input only
+    private static boolean isValidName(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isLetter(str.charAt(i))) {
+                return false; // Found a non-letter character
+            }
+        }
+        return true; // All characters are letters
     }
 
     // Method to add a new student
@@ -71,9 +85,7 @@ public class PUMIS {
             students = Arrays.copyOf(students, students.length * 2);
         }
 
-        System.out.print("Id assigned \n");
         int id = idcounter++;
-        scanner.nextLine(); // Consume newline character
 
         // Check if the ID already exists
         if (findStudentByID(id) != null) {
@@ -81,15 +93,23 @@ public class PUMIS {
             return;
         }
 
-        System.out.print("Enter student name: ");
-        String name = scanner.nextLine();
+        String name;
+        boolean validInput = false;
 
-        students[numStudents] = new Student(id, name); // Create and add new student
-        numStudents++; // Increment student count
+        while (!validInput) {
+            System.out.print("Enter student name: ");
+            name = scanner.nextLine().trim(); // Read and trim input
 
-        System.out.println("Student added successfully.");
+            if (isValidName(name)) {
+                students[numStudents] = new Student(id, name); // Create and add new student
+                numStudents++; // Increment student count
+                validInput = true;
+                System.out.println("Student added successfully.");
+            } else {
+                System.out.println("Invalid name. Please enter a name with only characters.");
+            }
+        }
     }
-
     // Method to display all students
     private static void displayAllStudents() {
         if (numStudents == 0) {
