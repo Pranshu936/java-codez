@@ -22,7 +22,7 @@ public class PUMIS {
             System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
-            int choice = getIntInput; // Read user choice
+            int choice = getIntInput(); // Read user choice
 
             switch (choice) {
                 case 1:
