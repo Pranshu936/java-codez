@@ -60,9 +60,9 @@ public class BankingApp {
         System.out.print("How many number of customers do you want to input? ");  
         int n = sc.nextInt();  
         BankDetails[] C = new BankDetails[n];
-        for (BankDetails account : C) {
-            account = new BankDetails();
-            account.openAccount();
+        for (int i = 0; i < C.length; i++) {
+            C[i] = new BankDetails();
+            C[i].openAccount();
         } 
         // loop runs until number 5 is not pressed to exit  
         int ch;  
