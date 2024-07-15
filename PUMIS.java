@@ -1,12 +1,11 @@
-import java.util.Scanner;
-import java.util.Arrays;
+import java.io.*;
 import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class PUMIS {
-    private static Student[] students = new Student[10]; // Array to store students
-    private static int numStudents = 0; // Number of students currently in the system
-    private static Scanner scanner = new Scanner(System.in);
     private static int idcounter = 1001; // Counter to generate unique student IDs
+    private static final String FILENAME = "students.csv"; // File to store student data
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         boolean exit = false;
@@ -19,37 +18,33 @@ public class PUMIS {
             System.out.println("3. Search Student by ID");
             System.out.println("4. Update Student Information");
             System.out.println("5. Delete Student by ID");
-            System.out.println("6. Sort Students by ID");
-            System.out.println("7. Exit");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = getIntInput(); // Read user choice
 
             switch (choice) {
                 case 1:
-                    addStudent(); // Add a new student
+                    addStudent();
                     break;
                 case 2:
-                    displayAllStudents(); // Display all students
+                    displayAllStudents();
                     break;
                 case 3:
-                    searchStudentByID(); // Search for a student by ID
+                    searchStudentByID();
                     break;
                 case 4:
-                    updateStudent(); // Update student information
+                    updateStudent();
                     break;
                 case 5:
-                    deleteStudentByID(); // Delete a student by ID
+                    deleteStudentByID();
                     break;
                 case 6:
-                    sortStudentsByID(); // Sort students by ID
-                    break;
-                case 7:
-                    exit = true; // Exit the program
+                    exit = true;
                     System.out.println("Exiting... Thank you!");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 6.");
             }
         }
 
@@ -57,20 +52,20 @@ public class PUMIS {
     }
 
     // Utility method to get integer input from user
-     private static int getIntInput() {
-    while (true) {
-        try {
-            return scanner.nextInt();
-        } catch (InputMismatchException e) {
-            System.out.print("Invalid input. Please enter a number: ");
-            scanner.next(); // Consume invalid input
-        } finally {
-            scanner.nextLine(); // Consume newline character
+    private static int getIntInput() {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input. Please enter a number: ");
+                scanner.next(); // Consume invalid input
+            } finally {
+                scanner.nextLine(); // Consume newline character
+            }
         }
     }
-}
 
-    //Take character as input only
+    // Method to check if a string contains only letters
     private static boolean isValidName(String str) {
         for (int i = 0; i < str.length(); i++) {
             if (!Character.isLetter(str.charAt(i))) {
@@ -82,91 +77,107 @@ public class PUMIS {
 
     // Method to add a new student
     private static void addStudent() {
-    if (numStudents == students.length) {
-        // If array is full, resize it
-        students = Arrays.copyOf(students, students.length * 2);
-    }
+        int id = idcounter++;
 
-    int id = idcounter++;
+        String name;
+        boolean validInput = false;
+        while (!validInput) {
+            System.out.print("Enter student name: ");
+            name = scanner.nextLine().trim(); // Read and trim input
 
-    // Check if the ID already exists
-    if (findStudentByID(id) != null) {
-        System.out.println("Student with ID " + id + " already exists. Please enter a different ID.");
-        return;
-    }
-
-    String name;
-    boolean validInput = false;
-    while (!validInput) {
-        System.out.print("Enter student name: ");
-        name = scanner.nextLine(); // Read and trim input
-
-        if (isValidName(name)) {
-            students[numStudents] = new Student(id, name); // Create and add new student
-            numStudents++; // Increment student count
-            validInput = true;
-            System.out.println("Student added successfully.");
-        } else {
-            System.out.println("Invalid name. Please enter a name with only characters.");
+            if (isValidName(name)) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
+                    writer.write(id + "," + name + "\n");
+                    System.out.println("Student added successfully.");
+                    validInput = true;
+                } catch (IOException e) {
+                    System.err.println("Error writing to file: " + e.getMessage());
+                }
+            } else {
+                System.out.println("Invalid name. Please enter a name with only characters.");
+            }
         }
     }
-}
 
     // Method to display all students
     private static void displayAllStudents() {
-        if (numStudents == 0) {
-            System.out.println("No students to display.");
-        } else {
-            System.out.println("\nList of Students:");
-            for (int i = 0; i < numStudents; i++) {
-                System.out.println(students[i]); // Print each student's information
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    int id = Integer.parseInt(parts[0]);
+                    String name = parts[1];
+                    System.out.println("ID: " + id + ", Name: " + name);
+                }
             }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
         }
     }
 
     // Method to search for a student by ID
-   private static void searchStudentByID() {
-    System.out.print("Enter student ID to search: ");
-    int id = getIntInput(); // Get student ID from user input
-    scanner.nextLine(); // Consume newline character
+    private static void searchStudentByID() {
+        System.out.print("Enter student ID to search: ");
+        int id = getIntInput(); // Get student ID from user input
 
-    Student foundStudent = findStudentByID(id); // Search for student
-
-    if (foundStudent != null) {
-        System.out.println("Student found:");
-        System.out.println(foundStudent); // Display student information
-    } else {
-        System.out.println("Student not found with ID: " + id);
-    }
-}
-
-    // Helper method to find a student by ID
-    private static Student findStudentByID(int id) {
-        for (int i = 0; i < numStudents; i++) {
-            if (students[i].getId() == id) {
-                return students[i]; // Return the student object if found
+        boolean found = false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2 && Integer.parseInt(parts[0]) == id) {
+                    String name = parts[1];
+                    System.out.println("Student found:");
+                    System.out.println("ID: " + id + ", Name: " + name);
+                    found = true;
+                    break;
+                }
             }
+            if (!found) {
+                System.out.println("Student not found with ID: " + id);
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
         }
-        return null; // Return null if student with given ID is not found
     }
 
     // Method to update student information
     private static void updateStudent() {
         System.out.print("Enter student ID to update: ");
         int id = getIntInput(); // Get student ID from user input
-        scanner.nextLine(); // Consume newline character
 
-        Student studentToUpdate = findStudentByID(id); // Find student to update
+        boolean found = false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME));
+             BufferedWriter writer = new BufferedWriter(new FileWriter("temp.csv"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2 && Integer.parseInt(parts[0]) == id) {
+                    System.out.print("Enter new name for student: ");
+                    String newName = scanner.nextLine().trim(); // Get new name from user input
+                    writer.write(id + "," + newName + "\n");
+                    System.out.println("Student information updated successfully.");
+                    found = true;
+                } else {
+                    writer.write(line + "\n");
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error updating student information: " + e.getMessage());
+        }
 
-        if (studentToUpdate != null) {
-            System.out.print("Enter new name for student: ");
-            String newName = scanner.nextLine(); // Get new name from user input
-
-            studentToUpdate.setName(newName); // Update student name
-
-            System.out.println("Student information updated successfully.");
-        } else {
+        if (!found) {
             System.out.println("Student not found with ID: " + id);
+        } else {
+            // Rename temp.csv to students.csv after successful update
+            File oldFile = new File(FILENAME);
+            File newFile = new File("temp.csv");
+            if (newFile.renameTo(oldFile)) {
+                System.out.println("File renamed successfully.");
+            } else {
+                System.err.println("Failed to rename file.");
+            }
         }
     }
 
@@ -174,76 +185,35 @@ public class PUMIS {
     private static void deleteStudentByID() {
         System.out.print("Enter student ID to delete: ");
         int id = getIntInput(); // Get student ID from user input
-        scanner.nextLine(); // Consume newline character
 
         boolean found = false;
-        for (int i = 0; i < numStudents; i++) {
-            if (students[i].getId() == id) {
-                // Shift elements to the left to remove the student
-                for (int j = i; j < numStudents - 1; j++) {
-                    students[j] = students[j + 1];
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME));
+             BufferedWriter writer = new BufferedWriter(new FileWriter("temp.csv"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2 && Integer.parseInt(parts[0]) == id) {
+                    System.out.println("Student deleted successfully.");
+                    found = true;
+                } else {
+                    writer.write(line + "\n");
                 }
-                numStudents--; // Decrement student count
-
-                // Clear the last element
-                students[numStudents] = null;
-
-                found = true;
-                System.out.println("Student deleted successfully.");
-                break;
             }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error deleting student: " + e.getMessage());
         }
 
         if (!found) {
             System.out.println("Student not found with ID: " + id);
-        }
-    }
-
-    // Method to sort students by ID using bubble sort
-    private static void sortStudentsByID() {
-        if (numStudents > 1) {
-            // Bubble sort by student ID
-            for (int i = 0; i < numStudents - 1; i++) {
-                for (int j = 0; j < numStudents - i - 1; j++) {
-                    if (students[j].getId() > students[j + 1].getId()) {
-                        // Swap students
-                        Student temp = students[j];
-                        students[j] = students[j + 1];
-                        students[j + 1] = temp;
-                    }
-                }
-            }
-            System.out.println("Students sorted by ID.");
         } else {
-            System.out.println("Sorting requires at least 2 students.");
-        }
-    }
-
-    // Nested Student class to represent a student
-    static class Student {
-        private int id;
-        private String name;
-
-        public Student(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "ID: " + id + ", Name: " + name;
+            // Rename temp.csv to students.csv after successful delete
+            File oldFile = new File(FILENAME);
+            File newFile = new File("temp.csv");
+            if (newFile.renameTo(oldFile)) {
+                System.out.println("File renamed successfully.");
+            } else {
+                System.err.println("Failed to rename file.");
+            }
         }
     }
 }
