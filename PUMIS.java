@@ -2,12 +2,20 @@ import java.io.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Student Management System (PUMIS: Personalized University Management Information System)
+ * This program manages student records using a CSV file and maintains a unique ID counter.
+ */
 public class PUMIS {
-    private static int idcounter = 1001; // Counter to generate unique student IDs
+    private static int idcounter; // Counter to generate unique student IDs
     private static final String FILENAME = "students.csv"; // File to store student data
+    private static final String ID_FILE = "last_used_id.txt"; // File to store last used ID
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        // Initialize idcounter from file or start from 1001 if file doesn't exist
+        initializeIDCounter();
+
         boolean exit = false;
 
         while (!exit) {
@@ -65,14 +73,28 @@ public class PUMIS {
         }
     }
 
-    // Method to check if a string contains only letters
-    private static boolean isValidName(String str) {
-        for (int i = 0; i < str.length(); i++) {
-            if (!Character.isLetter(str.charAt(i))) {
-                return false; // Found a non-letter character
+    // Initialize idcounter from file or start from 1001 if file doesn't exist
+    private static void initializeIDCounter() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ID_FILE))) {
+            String lastID = reader.readLine();
+            if (lastID != null && !lastID.isEmpty()) {
+                idcounter = Integer.parseInt(lastID);
+            } else {
+                idcounter = 1001; // Default starting ID
             }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error initializing ID counter: " + e.getMessage());
+            idcounter = 1001; // Default starting ID
         }
-        return true; // All characters are letters
+    }
+
+    // Method to store the last used ID back to the file
+    private static void storeLastUsedID() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ID_FILE))) {
+            writer.write(String.valueOf(idcounter));
+        } catch (IOException e) {
+            System.err.println("Error storing last used ID: " + e.getMessage());
+        }
     }
 
     // Method to add a new student
@@ -85,7 +107,7 @@ public class PUMIS {
             System.out.print("Enter student name: ");
             name = scanner.nextLine().trim(); // Read and trim input
 
-            if (isValidName(name)) {
+            if (!name.isEmpty()) {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
                     writer.write(id + "," + name + "\n");
                     System.out.println("Student added successfully.");
@@ -94,9 +116,12 @@ public class PUMIS {
                     System.err.println("Error writing to file: " + e.getMessage());
                 }
             } else {
-                System.out.println("Invalid name. Please enter a name with only characters.");
+                System.out.println("Invalid name. Please enter a non-empty name.");
             }
         }
+
+        // Update the last used ID after adding a student
+        storeLastUsedID();
     }
 
     // Method to display all students
@@ -149,7 +174,8 @@ public class PUMIS {
 
         boolean found = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME));
-             BufferedWriter writer = new BufferedWriter(new FileWriter("temp.csv"))) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter("students_temp.csv"))) {
+
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -165,20 +191,34 @@ public class PUMIS {
             }
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error updating student information: " + e.getMessage());
+            return; // Exit method on error
         }
 
         if (!found) {
             System.out.println("Student not found with ID: " + id);
-        } else {
-            // Rename temp.csv to students.csv after successful update
-            File oldFile = new File(FILENAME);
-            File newFile = new File("temp.csv");
-            if (newFile.renameTo(oldFile)) {
-                System.out.println("File renamed successfully.");
-            } else {
-                System.err.println("Failed to rename file.");
-            }
+            return; // Exit method if student not found
         }
+
+        // Replace original students.csv with students_temp.csv
+        try {
+            File originalFile = new File(FILENAME);
+            File tempFile = new File("students_temp.csv");
+
+            if (originalFile.delete()) { // Delete original students.csv
+                if (tempFile.renameTo(originalFile)) {
+                    System.out.println("File renamed successfully.");
+                } else {
+                    System.err.println("Failed to rename file.");
+                }
+            } else {
+                System.err.println("Failed to delete original file.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error renaming file: " + e.getMessage());
+        }
+
+        // Update the last used ID after updating a student
+        storeLastUsedID();
     }
 
     // Method to delete a student by ID
@@ -188,7 +228,8 @@ public class PUMIS {
 
         boolean found = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME));
-             BufferedWriter writer = new BufferedWriter(new FileWriter("temp.csv"))) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter("students_temp.csv"))) {
+
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -201,19 +242,30 @@ public class PUMIS {
             }
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error deleting student: " + e.getMessage());
+            return; // Exit method on error
         }
 
         if (!found) {
             System.out.println("Student not found with ID: " + id);
-        } else {
-            // Rename temp.csv to students.csv after successful delete
-            File oldFile = new File(FILENAME);
-            File newFile = new File("temp.csv");
-            if (newFile.renameTo(oldFile)) {
-                System.out.println("File renamed successfully.");
+            return; // Exit method if student not found
+        }
+
+        // Replace original students.csv with students_temp.csv
+        try {
+            File originalFile = new File(FILENAME);
+            File tempFile = new File("students_temp.csv");
+
+            if (originalFile.delete()) { // Delete original students.csv
+                if (tempFile.renameTo(originalFile)) {
+                    System.out.println("File renamed successfully.");
+                } else {
+                    System.err.println("Failed to rename file.");
+                }
             } else {
-                System.err.println("Failed to rename file.");
+                System.err.println("Failed to delete original file.");
             }
+        } catch (Exception e) {
+            System.err.println("Error renaming file: " + e.getMessage());
         }
     }
 }
