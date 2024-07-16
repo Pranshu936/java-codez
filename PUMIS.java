@@ -3,8 +3,10 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Student Management System (PUMIS: Personalized University Management Information System)
- * This program manages student records using a CSV file and maintains a unique ID counter.
+ * Student Management System (PUMIS: Personalized University Management
+ * Information System)
+ * This program manages student records using a CSV file and maintains a unique
+ * ID counter.
  */
 public class PUMIS {
     private static int idcounter; // Counter to generate unique student IDs
@@ -107,7 +109,8 @@ public class PUMIS {
             System.out.print("Enter student name: ");
             name = scanner.nextLine().trim(); // Read and trim input
 
-            if (!name.isEmpty()) {
+            // Validate the input
+            if (isValidName(name)) {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
                     writer.write(id + "," + name + "\n");
                     System.out.println("Student added successfully.");
@@ -116,12 +119,18 @@ public class PUMIS {
                     System.err.println("Error writing to file: " + e.getMessage());
                 }
             } else {
-                System.out.println("Invalid name. Please enter a non-empty name.");
+                System.out.println("Invalid name. Please enter a valid name (only alphabetic characters).");
             }
         }
 
         // Update the last used ID after adding a student
         storeLastUsedID();
+    }
+
+    // Method to validate if a name contains only alphabetic characters
+    private static boolean isValidName(String name) {
+        // Allow alphabetic characters and spaces
+        return name.matches("[a-zA-Z ]+");
     }
 
     // Method to display all students
@@ -182,9 +191,16 @@ public class PUMIS {
                 if (parts.length == 2 && Integer.parseInt(parts[0]) == id) {
                     System.out.print("Enter new name for student: ");
                     String newName = scanner.nextLine().trim(); // Get new name from user input
-                    writer.write(id + "," + newName + "\n");
-                    System.out.println("Student information updated successfully.");
-                    found = true;
+
+                    // Validate the input
+                    if (isValidName(newName)) {
+                        writer.write(id + "," + newName + "\n");
+                        System.out.println("Student information updated successfully.");
+                        found = true;
+                    } else {
+                        System.out.println("Invalid name. Please enter a valid name (only alphabetic characters).");
+                        writer.write(line + "\n"); // Keep the original line in the temp file
+                    }
                 } else {
                     writer.write(line + "\n");
                 }
